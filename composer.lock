@@ -393,16 +393,16 @@
         },
         {
             "name": "kwn/number-to-words",
-            "version": "2.10.0",
+            "version": "2.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kwn/number-to-words.git",
-                "reference": "2144ba025d9f6f0ff850049fa43ba3bf47220460"
+                "reference": "64a324325991ff6fa29f798071712409df3a961f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kwn/number-to-words/zipball/2144ba025d9f6f0ff850049fa43ba3bf47220460",
-                "reference": "2144ba025d9f6f0ff850049fa43ba3bf47220460",
+                "url": "https://api.github.com/repos/kwn/number-to-words/zipball/64a324325991ff6fa29f798071712409df3a961f",
+                "reference": "64a324325991ff6fa29f798071712409df3a961f",
                 "shasum": ""
             },
             "require": {
@@ -440,9 +440,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kwn/number-to-words/issues",
-                "source": "https://github.com/kwn/number-to-words/tree/2.10.0"
+                "source": "https://github.com/kwn/number-to-words/tree/2.11.1"
             },
-            "time": "2024-09-18T20:08:07+00:00"
+            "time": "2024-11-14T20:05:27+00:00"
         },
         {
             "name": "psr/http-client",
