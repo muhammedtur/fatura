@@ -60,8 +60,6 @@ abstract class AbstractModel implements ModelInterface
             if (!Uuid::isValid($this->uuid)) {
                 throw new InvalidArgumentException('Uuid geçerli formatta değil.');
             }
-        } else {
-            $this->uuid = Uuid::uuid1()->toString();
         }
 
         if ($this->tarih) {
@@ -103,6 +101,20 @@ abstract class AbstractModel implements ModelInterface
     public function getUuid(): string
     {
         return $this->uuid;
+    }
+
+    /**
+     * setUuid
+     *
+     * @return self
+     */
+    public function setUuid(string $uuid): self
+    {
+        if ($uuid && !Uuid::isValid($uuid)) {
+            throw new InvalidArgumentException('Uuid geçerli formatta değil.');
+        }
+        $this->uuid = $uuid;
+        return $this;
     }
     
     /**

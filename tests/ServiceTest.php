@@ -107,7 +107,7 @@ class ServiceTest extends TestCase
         $invoiceData = $invoice->export();
 
         $isCreated = $service->createDraft($invoiceData);
-        $createdInvoice = $service->getDocument($invoice->getUuid());
+        $createdInvoice = $service->getDocument($service->lastId());
 
         $this->assertTrue($isCreated);
         $this->assertEquals($createdInvoice['aliciAdi'],                 $invoiceData['aliciAdi']);

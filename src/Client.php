@@ -18,7 +18,7 @@ class Client
      * @var array headers
      */
     protected static $headers = [
-        'content-type' => 'application/x-www-form-urlencoded',
+        'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
     ];
     
     /**
@@ -32,8 +32,10 @@ class Client
     {
         try {
             $request = (new \GuzzleHttp\Client)->request($post ? 'POST' : 'GET', $url, [
-                'headers'     => self::$headers, 
-                'form_params' => $parameters
+                'headers' => self::$headers, 
+                'form_params' => $parameters,
+                'timeout' => 30,
+                'connect_timeout' => 10,
             ]);
             if ($response = json_decode($request->getBody()->getContents(), true)) {
                 if (is_array($response)) {
@@ -57,9 +59,10 @@ class Client
      */
     public function get(?string $element = null): mixed
     {
-        return is_null($element) 
-            ? $this->response
-            : $this->response[$element];
+        if ($element === null) {
+            return $this->response;
+        }
+        return $this->response[$element] ?? null;
     }
 
     /**
@@ -72,8 +75,9 @@ class Client
     {
         $response = json_decode(json_encode($this->response, JSON_FORCE_OBJECT), false);
         
-        return is_null($element) 
-            ? $response
-            : $response->$element;
+        if ($element === null) {
+            return $response;
+        }
+        return $response->{$element} ?? null;
     }
 }

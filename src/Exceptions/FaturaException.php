@@ -19,11 +19,11 @@ abstract class FaturaException extends Exception
     private $response;
 
     public function __construct(
-        string    $message  = null, 
-        mixed     $request  = null,
-        mixed     $response = null,
-        int       $code     = 0, 
-        Exception $previous = null, 
+        ?string    $message  = null, 
+        mixed      $request  = null,
+        mixed      $response = null,
+        int        $code     = 0, 
+        ?Exception $previous = null, 
     ) {
         parent::__construct($message, $code, $previous);
         $this->response = $response;

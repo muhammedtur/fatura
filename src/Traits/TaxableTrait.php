@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mlevent\Fatura\Traits;
 
+use Closure;
 use Mlevent\Fatura\Enums\Tax;
 
 trait TaxableTrait
@@ -150,7 +151,7 @@ trait TaxableTrait
      * @param  callable|null $filterFn
      * @return float
      */
-    public function totalTaxAmount(callable $filterFn = null): float
+    public function totalTaxAmount(?Closure $filterFn = null): float
     {
         return array_column_sum($this->taxes, 'amount', $filterFn);
     }
@@ -161,7 +162,7 @@ trait TaxableTrait
      * @param  callable|null $filterFn
      * @return float
      */
-    public function totalTaxVat(callable $filterFn = null): float
+    public function totalTaxVat(?Closure $filterFn = null): float
     {
         return array_column_sum($this->taxes, 'vat', $filterFn);
     }

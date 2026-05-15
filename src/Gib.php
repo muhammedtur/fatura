@@ -89,7 +89,7 @@ class Gib
     /**
      * setCredentials
      */
-    public function setCredentials(string $username = null, string $password = null): self
+    public function setCredentials(?string $username = null, ?string $password = null): self
     {
         $this->username = $username;
         $this->password = $password;
@@ -110,7 +110,7 @@ class Gib
     /**
      * setTestCredentials
      */
-    public function setTestCredentials(string $username = null, string $password = null): self
+    public function setTestCredentials(?string $username = null, ?string $password = null): self
     {   
         if ($username && $password) {
             return $this->testMode()->setCredentials($username, $password);
@@ -136,7 +136,7 @@ class Gib
     /**
      * setToken
      */
-    public function setToken(string $token = null): self
+    public function setToken(?string $token = null): self
     {
         $this->token = $token;
         return $this;
@@ -175,7 +175,7 @@ class Gib
     /**
      * login
      */
-    public function login(string $username = null, string $password = null): self
+    public function login(?string $username = null, ?string $password = null): self
     {
         if ($username && $password) {
             $this->setCredentials($username, $password);
@@ -308,11 +308,21 @@ class Gib
      */
     public function createDraft(ModelInterface|array $data): bool
     {
-        if ($data instanceof ModelInterface) {
-            $this->setLastId($data->getUuid());
+        $model = $data instanceof ModelInterface ? $data : null;
+
+        if (!empty($model)) {
+            if ($data->getUuid()) {
+                $this->setLastId($data->getUuid());
+            }
             $data = $data->export();
         }
 
+        $isNewDraft = empty($data['belgeNumarasi']);
+
+        if ($isNewDraft) {
+           unset($data['uuid'], $data['faturaUuid'], $data['ettn']);
+        }
+        
         $requestPath = match ($this->documentType) {
             DocumentType::Invoice             => ['EARSIV_PORTAL_FATURA_OLUSTUR', 'RG_BASITFATURA'],
             DocumentType::ProducerReceipt     => ['EARSIV_PORTAL_MUSTAHSIL_OLUSTUR', 'RG_MUSTAHSIL'],
@@ -326,7 +336,30 @@ class Gib
         if (!str_contains($response->object('data'), 'başarıyla')) {
             throw new ApiException($response->object('data'), $data, $response);
         }
+
+        if ($isNewDraft && $uuid = $this->resolveCreatedDraftUuid($data)) {
+            $this->setLastId($uuid);
+            $model?->setUuid($uuid);
+        }
         return true;
+    }
+
+    /**
+     * resolveCreatedDraftUuid
+     */
+    protected function resolveCreatedDraftUuid(array $data): ?string
+    {
+        $getLastDocument = $this->getLastDocument('-1 minute');
+
+        if (empty($getLastDocument)) {
+            return null;
+        }
+
+        return match ($this->documentType) {
+            DocumentType::Invoice => $getLastDocument['faturaUuid'] ?? null,
+            DocumentType::ProducerReceipt => $getLastDocument['uuid'] ?? null,
+            DocumentType::SelfEmployedReceipt => $getLastDocument['ettn'] ?? null,
+        };
     }
 
     /**
@@ -376,12 +409,12 @@ class Gib
     /**
      * getLastDocument
      */
-    public function getLastDocument(): array
+    public function getLastDocument(string $fromModifier = '-1 year'): array
     {
         $lastDocument = $this->onlyCurrent()
                              ->setLimit(1)
                              ->sortDesc()
-                             ->getAll(curdate('d/m/Y', '-1 year'), curdate('d/m/Y'));
+                             ->getAll(curdate('d/m/Y', $fromModifier), curdate('d/m/Y'));
                              
         return $lastDocument 
             ? $this->getDocument($lastDocument[0]['ettn']) 

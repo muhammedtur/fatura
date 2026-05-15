@@ -7,6 +7,7 @@ namespace Mlevent\Fatura\Interfaces;
 interface ModelInterface
 {
     public function getUuid(): string;
+    public function setUuid(string $uuid): self;
     public function getItems(): array;
     public function getTaxes(): array;
     public function getTotals(): array;
